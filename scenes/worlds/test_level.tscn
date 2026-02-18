@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://test_level"]
+[gd_scene load_steps=9 format=3 uid="uid://test_level"]
 
 [ext_resource type="Script" path="res://scenes/worlds/main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://player_scene" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://enemy_scene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
 [ext_resource type="Environment" uid="uid://game_environment" path="res://resources/environment/game_environment.tres" id="4_environment"]
+[ext_resource type="PackedScene" uid="uid://player_ui" path="res://scenes/ui/player_ui.tscn" id="5_ui"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(100, 1, 100)
@@ -89,3 +90,5 @@ absorb_ability = null
 [node name="Enemy3" parent="Entities" instance=ExtResource("3_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
 absorb_ability = null
+
+[node name="UI" parent="." instance=ExtResource("5_ui")]
