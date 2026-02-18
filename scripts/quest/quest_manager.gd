@@ -43,7 +43,7 @@ func start_quest(quest_id: String) -> bool:
     print("Quest started: " + quest.quest_name)
     return true
 
-func update_quest(objective_type: String, amount: int = 1) -> void:
+func update_quest(objective_type: QuestObjective.ObjectiveType, amount: int = 1) -> void:
     for quest in active_quests:
         if quest.update_objective(objective_type, amount):
             quest_updated.emit(quest)
