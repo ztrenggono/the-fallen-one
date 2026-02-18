@@ -1,0 +1,91 @@
+[gd_scene load_steps=8 format=3 uid="uid://test_level"]
+
+[ext_resource type="Script" path="res://scenes/worlds/main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://player_scene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://enemy_scene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
+[ext_resource type="Environment" uid="uid://game_environment" path="res://resources/environment/game_environment.tres" id="4_environment"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(100, 1, 100)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+size = Vector3(100, 1, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.2, 0.25, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_platform"]
+size = Vector3(3, 0.5, 3)
+
+[node name="TestLevel" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = ExtResource("4_environment")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.866, -0.433, 0.25, 0, 0.5, 0.866, -0.5, -0.75, 0.433, 0, 20, 0)
+light_color = Color(0.95, 0.9, 0.8, 1)
+light_energy = 1.2
+shadow_enabled = true
+shadow_bias = 0.1
+
+[node name="Ground" type="StaticBody3D" parent="Environment"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Ground"]
+mesh = SubResource("BoxMesh_ground")
+surface_material_override/0 = SubResource("StandardMaterial3D_ground")
+
+[node name="Platforms" type="Node3D" parent="Environment"]
+
+[node name="Platform1" type="StaticBody3D" parent="Environment/Platforms"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Platforms/Platform1"]
+shape = SubResource("BoxMesh_platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Platforms/Platform1"]
+mesh = SubResource("BoxMesh_platform")
+
+[node name="Platform2" type="StaticBody3D" parent="Environment/Platforms"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, 3)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Platforms/Platform2"]
+shape = SubResource("BoxMesh_platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Platforms/Platform2"]
+mesh = SubResource("BoxMesh_platform")
+
+[node name="Platform3" type="StaticBody3D" parent="Environment/Platforms"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -8)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Platforms/Platform3"]
+shape = SubResource("BoxMesh_platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Platforms/Platform3"]
+mesh = SubResource("BoxMesh_platform")
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="Player" parent="Entities" instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="Enemy" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 0)
+absorb_ability = null
+
+[node name="Enemy2" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, 3)
+absorb_ability = null
+
+[node name="Enemy3" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
+absorb_ability = null

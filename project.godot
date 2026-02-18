@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="The Fallen One"
 config/description="A 3D Souls-like Action RPG built with Godot"
-run/main_scene="res://scenes/worlds/main.tscn"
+run/main_scene="res://scenes/worlds/test_level.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
