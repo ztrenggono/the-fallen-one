@@ -90,3 +90,27 @@ game/
 ## Credits
 
 Created with Godot Engine
+
+## Assets
+
+### Included (CC0 License)
+- **KayKit Skeleton Pack** - Enemy 3D models
+  - Skeleton_Mage.glb
+  - Skeleton_Minion.glb
+  - Skeleton_Rogue.glb
+  - Skeleton_Warrior.glb
+
+### Required (Download Manually)
+1. **Player Character**
+   - https://kaylousberg.itch.io/kaykit-adventurers (Free)
+   - Extract to: `assets/models/characters/`
+
+2. **Sound Effects**
+   - https://freesound.org/browse/tags/sword/ (Free account)
+   - Save to: `assets/audio/sfx/combat/`
+
+3. **Music**
+   - https://opengameart.org/art-search?keys=dark+fantasy (Free)
+   - Save to: `assets/audio/music/`
+
+Run `./download_assets.sh` to download available assets automatically.

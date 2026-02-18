@@ -1,3 +1,5 @@
+## Base state for all player-specific states.
+## Provides access to the Player node and animation name export.
 extends State
 class_name PlayerState
 

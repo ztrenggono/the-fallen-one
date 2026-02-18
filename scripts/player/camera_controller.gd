@@ -1,3 +1,5 @@
+## Third-person camera controller.
+## Captures mouse input for orbit rotation around the player.
 extends Node3D
 class_name CameraController
 
@@ -11,17 +13,20 @@ var yaw: float = 0.0
 
 @onready var camera: Camera3D = $Camera3D
 
+
 func _ready() -> void:
     Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
     camera.position = Vector3(0, 0, camera_distance)
+
 
 func _input(event: InputEvent) -> void:
     if event is InputEventMouseMotion:
         _handle_mouse_motion(event)
 
+
 func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
     yaw -= event.relative.x * rotation_speed
     pitch -= event.relative.y * rotation_speed
     pitch = clamp(pitch, min_pitch, max_pitch)
-    
+
     rotation = Vector3(pitch, yaw, 0.0)

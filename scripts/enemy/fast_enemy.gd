@@ -1,3 +1,5 @@
+## Fast enemy type — agile with burst attacks and dodge chance.
+## Inherits gravity and movement from Enemy base.
 extends Enemy
 class_name FastEnemy
 
@@ -7,11 +9,7 @@ class_name FastEnemy
 
 var current_burst_count: int = 0
 
-func _physics_process(delta: float) -> void:
-    if not is_on_floor():
-        velocity.y -= gravity * delta
-    
-    move_and_slide()
 
+## Returns true if the enemy successfully dodges.
 func try_dodge() -> bool:
     return randf() < dodge_chance

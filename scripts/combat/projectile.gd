@@ -1,3 +1,9 @@
+## Projectile that travels in a direction and deals damage.
+## Destroys itself on collision or after lifetime expires.
+##
+## NOTE: Uses Area3D-based movement (not physics engine).
+## If you need physics forces, consider switching to
+## CharacterBody3D or using RigidBody3D.linear_velocity.
 extends RigidBody3D
 class_name Projectile
 
@@ -5,46 +11,64 @@ class_name Projectile
 @export var hit_effect_scene: PackedScene
 
 var damage: int = 10
-var velocity: Vector3 = Vector3.FORWARD
+var move_direction: Vector3 = Vector3.FORWARD
+var move_speed: float = 10.0
 var owner_entity: Node3D
 
 @onready var hitbox: Area3D = $Hitbox
 
+
 func _ready() -> void:
+    # Disable physics simulation — we handle movement manually
+    freeze = true
+
     hitbox.body_entered.connect(_on_hitbox_body_entered)
     hitbox.area_entered.connect(_on_hitbox_area_entered)
-    
-    get_tree().create_timer(lifetime).timeout.connect(queue_free)
+
+    get_tree().create_timer(lifetime).timeout.connect(
+        queue_free
+    )
+
 
 func _physics_process(delta: float) -> void:
-    position += velocity * delta
+    global_position += move_direction * move_speed * delta
 
-func launch(direction: Vector3, speed: float, dmg: int) -> void:
-    velocity = direction * speed
+
+## Initialize projectile trajectory and damage.
+func launch(
+    direction: Vector3,
+    speed: float,
+    dmg: int
+) -> void:
+    move_direction = direction.normalized()
+    move_speed = speed
     damage = dmg
     look_at(global_position + direction)
+
 
 func _on_hitbox_body_entered(body: Node3D) -> void:
     if body == owner_entity:
         return
-    
+
     if body.has_method("take_damage"):
         body.take_damage(damage)
-    
+
     _spawn_hit_effect()
     queue_free()
 
+
 func _on_hitbox_area_entered(area: Area3D) -> void:
     var body: Node3D = area.get_parent()
-    
+
     if body == owner_entity:
         return
-    
+
     if body.has_method("take_damage"):
         body.take_damage(damage)
-    
+
     _spawn_hit_effect()
     queue_free()
+
 
 func _spawn_hit_effect() -> void:
     if hit_effect_scene:

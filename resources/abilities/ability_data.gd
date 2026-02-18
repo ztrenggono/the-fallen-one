@@ -1,3 +1,5 @@
+## Data resource for an absorbable enemy ability.
+## Configure bonuses and effects in the inspector.
 extends Resource
 class_name AbilityData
 
