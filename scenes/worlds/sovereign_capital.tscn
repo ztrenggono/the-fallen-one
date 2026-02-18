@@ -1,0 +1,69 @@
+[gd_scene load_steps=8 format=3 uid="uid://sovereign_capital"]
+
+[ext_resource type="Script" path="res://scripts/world/boss_arena.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://player_scene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://boss_scene" path="res://scenes/bosses/boss.tscn" id="3_boss"]
+[ext_resource type="Environment" uid="uid://game_environment" path="res://resources/environment/game_environment.tres" id="4_env"]
+[ext_resource type="PackedScene" uid="uid://player_ui" path="res://scenes/ui/player_ui.tscn" id="5_ui"]
+[ext_resource type="PackedScene" uid="uid://boss_health_ui" path="res://scenes/ui/boss_health_ui.tscn" id="6_boss_ui"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(50, 1, 50)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+size = Vector3(50, 1, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.25, 0.2, 0.15, 1)
+roughness = 0.5
+
+[node name="SovereignCapital" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = ExtResource("4_env")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.866, -0.433, 0.25, 0, 0.5, 0.866, -0.5, -0.75, 0.433, 0, 15, 0)
+light_color = Color(1, 0.95, 0.9, 1)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="Environment"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Ground"]
+mesh = SubResource("BoxMesh_ground")
+surface_material_override/0 = SubResource("StandardMaterial3D_ground")
+
+[node name="ThroneRoom" type="Node3D" parent="Environment"]
+
+[node name="Throne" type="StaticBody3D" parent="Environment/ThroneRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 20)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/ThroneRoom/Throne"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/ThroneRoom/Throne"]
+mesh = SubResource("BoxMesh_ground")
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="Player" parent="Entities" instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -20)
+
+[node name="Boss" parent="Entities" instance=ExtResource("3_boss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 20)
+max_health = 300
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="PlayerUI" parent="UI" instance=ExtResource("5_ui")]
+
+[node name="BossHealthUI" parent="UI" instance=ExtResource("6_boss_ui")]

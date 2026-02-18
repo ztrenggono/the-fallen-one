@@ -1,0 +1,77 @@
+[gd_scene load_steps=9 format=3 uid="uid://forgotten_slums"]
+
+[ext_resource type="Script" path="res://scenes/worlds/main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://player_scene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://enemy_scene" path="res://scenes/enemies/enemy.tscn" id="3_enemy"]
+[ext_resource type="PackedScene" uid="uid://boss_scene" path="res://scenes/bosses/boss.tscn" id="4_boss"]
+[ext_resource type="Environment" uid="uid://game_environment" path="res://resources/environment/game_environment.tres" id="5_env"]
+[ext_resource type="PackedScene" uid="uid://player_ui" path="res://scenes/ui/player_ui.tscn" id="6_ui"]
+[ext_resource type="Script" path="res://scripts/enemy/fast_enemy.gd" id="7_fast"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.12, 0.1, 0.08, 1)
+roughness = 0.95
+
+[node name="ForgottenSlums" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = ExtResource("5_env")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.866, -0.433, 0.25, 0, 0.5, 0.866, -0.5, -0.75, 0.433, 0, 15, 0)
+light_color = Color(0.8, 0.7, 0.6, 1)
+light_energy = 0.6
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="Environment"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Ground"]
+mesh = SubResource("BoxMesh_ground")
+surface_material_override/0 = SubResource("StandardMaterial3D_ground")
+
+[node name="Structures" type="Node3D" parent="Environment"]
+
+[node name="House1" type="StaticBody3D" parent="Environment/Structures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.5, 15)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Structures/House1"]
+shape = SubResource("BoxMesh_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Structures/House1"]
+mesh = SubResource("BoxMesh_ground")
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="Player" parent="Entities" instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -35)
+
+[node name="Enemy" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, 0)
+
+[node name="Enemy2" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.5, 5)
+
+[node name="Enemy3" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.5, 15)
+
+[node name="FastEnemy" parent="Entities" instance=ExtResource("3_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, -10)
+max_health = 30
+move_speed = 5.0
+script = ExtResource("7_fast")
+
+[node name="UI" parent="." instance=ExtResource("6_ui")]
