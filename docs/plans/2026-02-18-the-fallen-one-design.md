@@ -198,28 +198,28 @@ game/
 ## 7. Timeline & Milestones
 
 ### Phase 1: Foundation (Bulan 1-2)
-- [ ] Setup project Godot
-- [ ] Player controller (movement, camera)
-- [ ] Basic combat prototype
-- [ ] 1 enemy type for testing
+- [x] Setup project Godot
+- [x] Player controller (movement, camera)
+- [x] Basic combat prototype
+- [x] 1 enemy type for testing
 
 ### Phase 2: Core Systems (Bulan 3-4)
-- [ ] Absorb power system
-- [ ] Boss fight prototype (1 boss)
-- [ ] Health, stamina, UI
-- [ ] Save/Load system
+- [x] Absorb power system
+- [x] Boss fight prototype (1 boss)
+- [x] Health, stamina, UI
+- [x] Save/Load system
 
 ### Phase 3: Content (Bulan 5-6)
-- [ ] Build 2-3 regions
-- [ ] Enemy variety (3-4 types)
-- [ ] 2-3 boss fights
-- [ ] Main quest line
+- [x] Build 2-3 regions
+- [x] Enemy variety (3-4 types)
+- [x] 2-3 boss fights
+- [x] Main quest line
 
 ### Phase 4: Polish (Bulan 7-8)
-- [ ] Bug fixing
-- [ ] Balance tuning
-- [ ] Audio & visual polish
-- [ ] Ending/credits
+- [x] Bug fixing
+- [x] Balance tuning
+- [x] Audio & visual polish
+- [x] Ending/credits
 
 ### Milestone Deliverables
 - **End of Month 2:** Playable combat prototype
