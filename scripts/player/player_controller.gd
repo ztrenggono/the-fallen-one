@@ -3,13 +3,15 @@ class_name Player
 
 @export var max_health: int = 100
 @export var max_stamina: float = 100.0
-@export var stamina_regen: float = 20.0
+@export var stamina_regen: float = 25.0
+@export var stamina_regen_delay: float = 0.5
 @export var move_speed: float = 5.0
 @export var sprint_speed: float = 8.0
 @export var jump_velocity: float = 4.5
 
 var current_health: int
 var current_stamina: float
+var stamina_regen_timer: float = 0.0
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 signal health_changed(current: int, maximum: int)
@@ -28,11 +30,13 @@ func _ready() -> void:
     add_to_group("player")
 
 func _physics_process(delta: float) -> void:
-    _regenerate_stamina(delta)
+    _update_stamina(delta)
     move_and_slide()
 
-func _regenerate_stamina(delta: float) -> void:
-    if current_stamina < max_stamina:
+func _update_stamina(delta: float) -> void:
+    if stamina_regen_timer > 0.0:
+        stamina_regen_timer -= delta
+    elif current_stamina < max_stamina:
         current_stamina = min(current_stamina + stamina_regen * delta, max_stamina)
         stamina_changed.emit(current_stamina, max_stamina)
 
@@ -40,6 +44,7 @@ func use_stamina(amount: float) -> bool:
     if current_stamina < amount:
         return false
     current_stamina -= amount
+    stamina_regen_timer = stamina_regen_delay
     stamina_changed.emit(current_stamina, max_stamina)
     return true
 

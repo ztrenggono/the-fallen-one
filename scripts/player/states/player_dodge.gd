@@ -3,11 +3,16 @@ class_name PlayerDodge
 
 @export var dodge_speed: float = 12.0
 @export var dodge_duration: float = 0.4
+@export var stamina_cost: float = 25.0
 
 var dodge_timer: float = 0.0
 var dodge_direction: Vector3 = Vector3.FORWARD
 
 func enter() -> void:
+    if not player.use_stamina(stamina_cost):
+        state_machine.change_state("Idle")
+        return
+    
     var input_dir: Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
     
     if input_dir == Vector2.ZERO:

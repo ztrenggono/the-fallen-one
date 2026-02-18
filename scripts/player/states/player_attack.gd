@@ -11,9 +11,9 @@ var combo_requested: bool = false
 var has_hit: bool = false
 
 var attack_data: Array[Dictionary] = [
-    {"duration": 0.4, "damage": 10, "range": 1.5},
-    {"duration": 0.35, "damage": 15, "range": 1.8},
-    {"duration": 0.5, "damage": 25, "range": 2.0},
+    {"duration": 0.4, "damage": 10, "range": 1.5, "stamina_cost": 10.0},
+    {"duration": 0.35, "damage": 15, "range": 1.8, "stamina_cost": 15.0},
+    {"duration": 0.5, "damage": 25, "range": 2.0, "stamina_cost": 20.0},
 ]
 
 func enter() -> void:
@@ -21,6 +21,12 @@ func enter() -> void:
     _start_attack()
 
 func _start_attack() -> void:
+    var stamina_cost: float = attack_data[attack_index].get("stamina_cost", 10.0)
+    
+    if not player.use_stamina(stamina_cost):
+        state_machine.change_state("Idle")
+        return
+    
     attack_timer = attack_data[attack_index]["duration"]
     can_combo = false
     combo_requested = false

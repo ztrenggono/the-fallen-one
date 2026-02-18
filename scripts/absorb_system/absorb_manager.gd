@@ -12,10 +12,10 @@ var total_health_bonus: int = 0
 
 @onready var player: Player = owner
 
-func absorb_ability(ability: AbilityData) -> bool:
+func absorb_ability(ability: AbilityData) -> void:
     if absorbed_abilities.size() >= max_abilities:
         print("Cannot absorb more abilities")
-        return false
+        return
     
     absorbed_abilities.append(ability)
     
@@ -32,11 +32,12 @@ func absorb_ability(ability: AbilityData) -> bool:
         ability.speed_bonus,
         ability.health_bonus
     ])
-    
-    return true
+    return
 
 func _apply_bonuses() -> void:
-    pass
+    player.move_speed += total_speed_bonus
+    player.jump_velocity += total_damage_bonus
+    player.stamina += total_health_bonus
 
 func get_total_power() -> int:
     return total_damage_bonus + int(total_speed_bonus * 10) + total_health_bonus
