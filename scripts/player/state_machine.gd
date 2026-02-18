@@ -13,7 +13,6 @@ func _ready() -> void:
         if child is State:
             states[child.name.to_lower()] = child
             child.state_machine = self
-            character = owner
     
     if initial_state:
         initial_state.enter()

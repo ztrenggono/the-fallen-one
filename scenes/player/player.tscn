@@ -1,7 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://player_scene"]
+[gd_scene load_steps=12 format=3 uid="uid://player_scene"]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2_camera"]
+[ext_resource type="Script" path="res://scripts/player/state_machine.gd" id="3_state_machine"]
+[ext_resource type="Script" path="res://scripts/player/states/player_idle.gd" id="4_idle"]
+[ext_resource type="Script" path="res://scripts/player/states/player_move.gd" id="5_move"]
+[ext_resource type="Script" path="res://scripts/player/states/player_air.gd" id="6_air"]
+[ext_resource type="Script" path="res://scripts/player/states/player_dodge.gd" id="7_dodge"]
+[ext_resource type="Script" path="res://scripts/player/states/player_attack.gd" id="8_attack"]
+[ext_resource type="Script" path="res://scripts/absorb_system/absorb_manager.gd" id="9_absorb"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -44,3 +51,25 @@ collision_mask = 5
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3_state_machine")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("4_idle")
+
+[node name="Move" type="Node" parent="StateMachine"]
+script = ExtResource("5_move")
+
+[node name="Air" type="Node" parent="StateMachine"]
+script = ExtResource("6_air")
+
+[node name="Dodge" type="Node" parent="StateMachine"]
+script = ExtResource("7_dodge")
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("8_attack")
+
+[node name="AbsorbManager" type="Node" parent="."]
+script = ExtResource("9_absorb")

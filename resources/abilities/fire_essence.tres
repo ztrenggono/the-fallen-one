@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://ability_fire"]
+
+[ext_resource type="Script" path="res://resources/abilities/ability_data.gd" id="1_ability"]
+
+[resource]
+script = ExtResource("1_ability")
+ability_name = "Fire Essence"
+description = "Absorbed from fire enemies. Increases attack damage."
+damage_bonus = 5
+speed_bonus = 0.0
+health_bonus = 0
+special_effect = "burn"
+cooldown = 0.0
