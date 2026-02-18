@@ -10,10 +10,12 @@ class_name Enemy
 var current_health: int
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var player_ref: Player = null
+var is_dead: bool = false
 
 @onready var detection_area: Area3D = $DetectionArea
 @onready var hitbox: Area3D = $Hitbox
 @onready var hurtbox: Area3D = $Hurtbox
+@onready var state_machine: Node = $StateMachine
 
 func _ready() -> void:
     current_health = max_health
@@ -25,30 +27,20 @@ func _physics_process(delta: float) -> void:
     if not is_on_floor():
         velocity.y -= gravity * delta
     
-    if player_ref:
-        var direction: Vector3 = (player_ref.global_position - global_position).normalized()
-        direction.y = 0.0
-        
-        var distance: float = global_position.distance_to(player_ref.global_position)
-        
-        if distance > attack_range:
-            velocity.x = direction.x * move_speed
-            velocity.z = direction.z * move_speed
-        else:
-            velocity.x = 0.0
-            velocity.z = 0.0
-    else:
-        velocity.x = 0.0
-        velocity.z = 0.0
-    
     move_and_slide()
 
 func take_damage(amount: int) -> void:
+    if is_dead:
+        return
+    
     current_health -= amount
     print("Enemy took %d damage, health: %d/%d" % [amount, current_health, max_health])
     
     if current_health <= 0:
-        die()
+        is_dead = true
+        state_machine.change_state("Death")
+    else:
+        state_machine.change_state("Hurt")
 
 func die() -> void:
     if absorb_ability and player_ref:
