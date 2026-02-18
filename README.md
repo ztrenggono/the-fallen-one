@@ -75,6 +75,7 @@ game/
 - [x] Phase 2: Core Systems
 - [x] Phase 3: Content
 - [x] Phase 4: Polish
+- [x] Assets Downloaded
 
 ## Requirements
 
@@ -84,8 +85,11 @@ game/
 ## Running the Game
 
 1. Open project in Godot 4.x
-2. Press F5 or click Play
-3. Start from Main Menu
+2. Wait for asset import to complete
+3. Press F5 or click Play
+4. Start from Main Menu
+
+**See `docs/POST_DOWNLOAD_CHECKLIST.md` for setup instructions after downloading assets.**
 
 ## Credits
 
@@ -94,23 +98,21 @@ Created with Godot Engine
 ## Assets
 
 ### Included (CC0 License)
+- **KayKit Adventurers Pack** - Player 3D models
+  - Barbarian.glb, Knight.glb, Mage.glb, Ranger.glb, Rogue.glb
+  
 - **KayKit Skeleton Pack** - Enemy 3D models
-  - Skeleton_Mage.glb
-  - Skeleton_Minion.glb
-  - Skeleton_Rogue.glb
-  - Skeleton_Warrior.glb
+  - Skeleton_Mage.glb, Skeleton_Minion.glb, Skeleton_Rogue.glb, Skeleton_Warrior.glb
 
-### Required (Download Manually)
-1. **Player Character**
-   - https://kaylousberg.itch.io/kaykit-adventurers (Free)
-   - Extract to: `assets/models/characters/`
+- **KayKit Weapons** - Swords, axes, bows, shields, etc.
 
-2. **Sound Effects**
+- **KayKit Animations** - Movement and combat animations
+
+### Still Required (Manual Download)
+1. **Sound Effects**
    - https://freesound.org/browse/tags/sword/ (Free account)
    - Save to: `assets/audio/sfx/combat/`
 
-3. **Music**
+2. **Background Music**
    - https://opengameart.org/art-search?keys=dark+fantasy (Free)
    - Save to: `assets/audio/music/`
-
-Run `./download_assets.sh` to download available assets automatically.
