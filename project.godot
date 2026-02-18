@@ -16,8 +16,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="The Fallen One"
 config/description="A 3D Souls-like Action RPG built with Godot"
-run/main_scene="res://scenes/worlds/test_level.tscn"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="res://scenes/ui/main_menu.tscn"
+config/features=PackedStringArray("4.6", "Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -88,3 +88,14 @@ interact={
 3d_physics/layer_5="enemy_hitbox"
 3d_physics/layer_6="player_hurtbox"
 3d_physics/layer_7="enemy_hurtbox"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+anti_aliasing/quality/msaa_3d=2
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.1, 0.1, 0.12, 1)
+
+[rendering.limits]
+
+time/time_rollover_secs=3600
