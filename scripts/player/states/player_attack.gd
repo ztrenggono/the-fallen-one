@@ -1,128 +1,138 @@
-## Attack state — 3-hit combo system with stamina costs.
-## Uses raycast for hit detection during the attack window.
+## Attack state — 3-hit combo with raycast hit detection.
+## Each hit has configurable duration, damage, range, stamina.
 extends PlayerState
-class_name PlayerAttack
 
-@export var combo_window: float = 0.5
+# Combo data: [duration, damage, range, stamina_cost]
+var attack_data: Array = [
+    [0.5, 15, 2.0, 10.0],
+    [0.4, 20, 2.2, 12.0],
+    [0.6, 30, 2.5, 15.0],
+]
 
 var attack_index: int = 0
 var attack_timer: float = 0.0
 var can_combo: bool = false
-var combo_requested: bool = false
 var has_hit: bool = false
-
-## Each entry defines: duration, damage, range, stamina_cost.
-var attack_data: Array[Dictionary] = [
-    {
-        "duration": 0.4, "damage": 10,
-        "range": 1.5, "stamina_cost": 10.0,
-    },
-    {
-        "duration": 0.35, "damage": 15,
-        "range": 1.8, "stamina_cost": 15.0,
-    },
-    {
-        "duration": 0.5, "damage": 25,
-        "range": 2.0, "stamina_cost": 20.0,
-    },
-]
 
 
 func enter() -> void:
-    attack_index = 0
-    _start_attack()
-
-
-func _start_attack() -> void:
-    var current: Dictionary = attack_data[attack_index]
-    var stamina_cost: float = current.get("stamina_cost", 10.0)
+    var data: Array = attack_data[attack_index]
+    var stamina_cost: float = data[3]
 
     if not player.use_stamina(stamina_cost):
         state_machine.change_state("Idle")
         return
 
-    attack_timer = current["duration"]
+    attack_timer = data[0]
     can_combo = false
-    combo_requested = false
     has_hit = false
 
-    # Rotate toward input direction if moving
-    var input_dir: Vector2 = Input.get_vector(
-        "move_left", "move_right",
-        "move_forward", "move_backward"
+    # Play combo animation
+    var anim_name: StringName = (
+        &"attack_0" + str(attack_index + 1)
     )
-    if input_dir != Vector2.ZERO:
-        var cam_basis: Basis = (
-            player.camera_pivot.global_transform.basis
-        )
-        var direction: Vector3 = (
-            cam_basis * Vector3(input_dir.x, 0.0, input_dir.y)
-        ).normalized()
-        player.rotate_toward_movement(direction, 0.1)
+    player.play_animation(anim_name)
 
-    # Stop horizontal movement during attack
     player.velocity.x = 0.0
     player.velocity.z = 0.0
 
 
 func physics_update(delta: float) -> void:
     attack_timer -= delta
-    var current: Dictionary = attack_data[attack_index]
-    var duration: float = current["duration"]
 
-    # Hit detection at 50% through the attack
-    if attack_timer <= duration * 0.5 and not has_hit:
+    # Hit check at 40% through the attack
+    var data: Array = attack_data[attack_index]
+    var hit_window: float = data[0] * 0.4
+    if not has_hit and attack_timer <= hit_window:
         _check_hit()
 
-    # Combo window opens at 70% through the attack
-    if attack_timer <= duration * 0.3:
+    # Allow combo input in second half
+    if attack_timer <= data[0] * 0.5:
         can_combo = true
-        if combo_requested:
-            _next_attack()
-            return
+        if Input.is_action_just_pressed("attack"):
+            var next: int = attack_index + 1
+            if next < attack_data.size():
+                attack_index = next
+                enter()
+                return
 
     if attack_timer <= 0.0:
-        if combo_requested:
-            _next_attack()
-        else:
-            state_machine.change_state("Idle")
+        attack_index = 0
+        state_machine.change_state("Idle")
 
 
-func handle_input(_event: InputEvent) -> void:
-    if Input.is_action_just_pressed("attack") and can_combo:
-        combo_requested = true
+func exit() -> void:
+    pass
 
 
-## Raycast forward to detect enemies in attack range.
 func _check_hit() -> void:
     has_hit = true
-    var current: Dictionary = attack_data[attack_index]
-    var atk_range: float = current["range"]
-    var atk_damage: int = current["damage"]
+    var data: Array = attack_data[attack_index]
+    var damage: int = data[1]
+    var atk_range: float = data[2]
 
-    var origin: Vector3 = player.global_position + Vector3.UP
-    var forward: Vector3 = -player.global_transform.basis.z
-    var target: Vector3 = origin + forward * atk_range
+    # Add absorb damage bonus
+    var absorb_mgr: AbsorbManager = (
+        player.get_node_or_null("AbsorbManager")
+    )
+    if absorb_mgr:
+        damage += absorb_mgr.get_damage_bonus()
+
+    # Raycast forward to detect enemies
+    var origin: Vector3 = (
+        player.global_position + Vector3.UP * 1.0
+    )
+    var forward: Vector3 = (
+        -player.global_transform.basis.z * atk_range
+    )
 
     var space: PhysicsDirectSpaceState3D = (
         player.get_world_3d().direct_space_state
     )
     var query: PhysicsRayQueryParameters3D = (
-        PhysicsRayQueryParameters3D.create(origin, target)
+        PhysicsRayQueryParameters3D.create(
+            origin, origin + forward
+        )
     )
-    query.collision_mask = 7
+    query.collision_mask = 4  # enemy hitbox layer
+    query.exclude = [player.get_rid()]
 
     var result: Dictionary = space.intersect_ray(query)
 
-    if result and result.collider.has_method("take_damage"):
-        result.collider.take_damage(atk_damage)
-        print("Hit enemy for %d damage" % atk_damage)
+    if result and result.has("collider"):
+        var target: Node3D = result["collider"]
+        var enemy: Node3D = target.get_parent()
+        if enemy.has_method("take_damage"):
+            enemy.take_damage(damage)
+            _spawn_hit_feedback(result["position"])
 
 
-func _next_attack() -> void:
-    attack_index += 1
+func _spawn_hit_feedback(hit_pos: Vector3) -> void:
+    # Screen shake
+    var tween: Tween = player.create_tween()
+    var cam: Camera3D = player.camera
+    var orig_offset: Vector3 = cam.position
+    tween.tween_property(
+        cam, "position",
+        orig_offset + Vector3(
+            randf_range(-0.1, 0.1),
+            randf_range(-0.05, 0.05),
+            0
+        ),
+        0.05
+    )
+    tween.tween_property(
+        cam, "position", orig_offset, 0.05
+    )
 
-    if attack_index >= attack_data.size():
-        attack_index = 0
+    # Spawn hit effect if available
+    var hit_scene: PackedScene = preload(
+        "res://scenes/vfx/hit_effect.tscn"
+    ) if ResourceLoader.exists(
+        "res://scenes/vfx/hit_effect.tscn"
+    ) else null
 
-    _start_attack()
+    if hit_scene:
+        var effect: Node3D = hit_scene.instantiate()
+        player.get_tree().current_scene.add_child(effect)
+        effect.global_position = hit_pos

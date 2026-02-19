@@ -1,35 +1,42 @@
-[gd_scene load_steps=10 format=3 uid="uid://enemy_scene"]
+[gd_scene load_steps=11 format=3 uid="uid://ranged_enemy_scene"]
 
-[ext_resource type="Script" path="res://scripts/enemy/enemy_base.gd" id="1_enemy"]
-[ext_resource type="Script" path="res://scripts/enemy/enemy_state_machine.gd" id="2_state_machine"]
+[ext_resource type="Script" path="res://scripts/enemy/ranged_enemy.gd" id="1_ranged"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_machine.gd" id="2_sm"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_idle.gd" id="3_idle"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_chase.gd" id="4_chase"]
-[ext_resource type="Script" path="res://scripts/enemy/states/enemy_attack.gd" id="5_attack"]
+[ext_resource type="Script" path="res://scripts/enemy/states/ranged_attack.gd" id="5_attack"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_hurt.gd" id="6_hurt"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_death.gd" id="7_death"]
-[ext_resource type="PackedScene" uid="uid://skeleton_minion" path="res://assets/models/enemies/skeletons/Skeleton_Minion.glb" id="8_skeleton"]
+[ext_resource type="PackedScene" path="res://assets/models/enemies/skeletons/Skeleton_Mage.glb" id="8_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
 height = 1.8
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_detection"]
-radius = 10.0
+radius = 20.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_hitbox"]
 radius = 0.8
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="RangedEnemy" type="CharacterBody3D"]
 collision_layer = 3
 collision_mask = 1
-script = ExtResource("1_enemy")
+script = ExtResource("1_ranged")
+max_health = 40
+move_speed = 2.5
+attack_range = 12.0
+detection_range = 20.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="Skeleton_Minion" parent="." instance=ExtResource("8_skeleton")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+[node name="Model" parent="." instance=ExtResource("8_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="ProjectileSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -0.8)
 
 [node name="DetectionArea" type="Area3D" parent="."]
 collision_layer = 0
@@ -55,7 +62,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
 
 [node name="StateMachine" type="Node" parent="."]
-script = ExtResource("2_state_machine")
+script = ExtResource("2_sm")
 initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="StateMachine"]

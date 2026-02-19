@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://boss_scene"]
+[gd_scene load_steps=10 format=3 uid="uid://boss_scene"]
 
 [ext_resource type="Script" path="res://scripts/enemy/boss_enemy.gd" id="1_boss"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_machine.gd" id="2_state_machine"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/enemy/states/boss_attack.gd" id="5_attack"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_hurt.gd" id="6_hurt"]
 [ext_resource type="Script" path="res://scripts/enemy/states/enemy_death.gd" id="7_death"]
+[ext_resource type="PackedScene" uid="uid://skeleton_warrior" path="res://assets/models/enemies/skeletons/Skeleton_Warrior.glb" id="8_warrior"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.6
@@ -31,8 +32,8 @@ detection_range = 15.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+[node name="Skeleton_Warrior" parent="." instance=ExtResource("8_warrior")]
+transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1.5, 0, 1.31134e-07, 0, -1.5, 0, 0, 0)
 
 [node name="DetectionArea" type="Area3D" parent="."]
 collision_layer = 0

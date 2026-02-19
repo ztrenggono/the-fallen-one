@@ -1,5 +1,5 @@
-## Death state — freezes movement, disables collision,
-## then calls enemy.die() after the death duration.
+## Death state — freezes, disables collision,
+## plays death animation, then calls die().
 extends EnemyState
 class_name EnemyDeath
 
@@ -14,6 +14,7 @@ func enter() -> void:
     enemy.velocity.z = 0.0
     enemy.collision_layer = 0
     enemy.collision_mask = 0
+    enemy.play_animation(&"death")
 
 
 func physics_update(delta: float) -> void:

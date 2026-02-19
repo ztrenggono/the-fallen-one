@@ -1,4 +1,4 @@
-## Hurt state — brief stun with knockback away from attacker.
+## Hurt state — knockback away from player.
 ## Transitions to Chase or Idle after recovery.
 extends EnemyState
 class_name EnemyHurt
@@ -12,6 +12,7 @@ var knockback_dir: Vector3 = Vector3.BACK
 
 func enter() -> void:
     hurt_timer = hurt_duration
+    enemy.play_animation(&"hurt")
 
     if enemy.player_ref:
         knockback_dir = (
@@ -26,7 +27,7 @@ func enter() -> void:
 func physics_update(delta: float) -> void:
     hurt_timer -= delta
 
-    # Knockback strength decays linearly over the duration
+    # Knockback decays linearly
     var strength: float = knockback_force * (
         hurt_timer / hurt_duration
     )
@@ -42,8 +43,10 @@ func _transition_after_hurt() -> void:
         state_machine.change_state("Idle")
         return
 
-    var dist: float = enemy.global_position.distance_to(
-        enemy.player_ref.global_position
+    var dist: float = (
+        enemy.global_position.distance_to(
+            enemy.player_ref.global_position
+        )
     )
     if dist <= enemy.detection_range:
         state_machine.change_state("Chase")

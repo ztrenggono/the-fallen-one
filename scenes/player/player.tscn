@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://player_scene"]
+[gd_scene load_steps=13 format=3 uid="uid://player_scene"]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2_camera"]
@@ -8,7 +8,9 @@
 [ext_resource type="Script" path="res://scripts/player/states/player_air.gd" id="6_air"]
 [ext_resource type="Script" path="res://scripts/player/states/player_dodge.gd" id="7_dodge"]
 [ext_resource type="Script" path="res://scripts/player/states/player_attack.gd" id="8_attack"]
-[ext_resource type="Script" path="res://scripts/absorb_system/absorb_manager.gd" id="9_absorb"]
+[ext_resource type="Script" path="res://scripts/player/states/player_parry.gd" id="9_parry"]
+[ext_resource type="Script" path="res://scripts/absorb_system/absorb_manager.gd" id="10_absorb"]
+[ext_resource type="PackedScene" uid="uid://barbarian_model" path="res://assets/models/characters/adventurers/Barbarian.glb" id="11_barbarian"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -26,8 +28,8 @@ script = ExtResource("1_player")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+[node name="Barbarian" parent="." instance=ExtResource("11_barbarian")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(0.955, -0.287, 0, 0.0885, 0.295, 0.951, -0.273, -0.909, 0.31, 0, 1.5, 0)
@@ -58,18 +60,27 @@ initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("4_idle")
+animation_name = &"idle"
 
 [node name="Move" type="Node" parent="StateMachine"]
 script = ExtResource("5_move")
+animation_name = &"walk"
 
 [node name="Air" type="Node" parent="StateMachine"]
 script = ExtResource("6_air")
+animation_name = &"jump"
 
 [node name="Dodge" type="Node" parent="StateMachine"]
 script = ExtResource("7_dodge")
+animation_name = &"roll"
 
 [node name="Attack" type="Node" parent="StateMachine"]
 script = ExtResource("8_attack")
+animation_name = &"attack"
+
+[node name="Parry" type="Node" parent="StateMachine"]
+script = ExtResource("9_parry")
+animation_name = &"block"
 
 [node name="AbsorbManager" type="Node" parent="."]
-script = ExtResource("9_absorb")
+script = ExtResource("10_absorb")

@@ -1,20 +1,25 @@
-## Chase state — pursues the player toward attack range.
-## Returns to Idle if player is lost or out of range.
+## Chase — pursues the player toward attack range.
+## Returns to Idle if player lost or out of range.
 extends EnemyState
 class_name EnemyChase
 
 
 func enter() -> void:
-    pass
+    enemy.play_animation(&"walk")
 
 
 func physics_update(delta: float) -> void:
+    if enemy.is_stunned:
+        return
+
     if not enemy.player_ref:
         state_machine.change_state("Idle")
         return
 
-    var dist: float = enemy.global_position.distance_to(
-        enemy.player_ref.global_position
+    var dist: float = (
+        enemy.global_position.distance_to(
+            enemy.player_ref.global_position
+        )
     )
 
     if dist <= enemy.attack_range:

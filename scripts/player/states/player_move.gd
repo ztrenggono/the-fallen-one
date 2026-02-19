@@ -1,43 +1,58 @@
-## Move state — player is walking on the ground.
-## Handles camera-relative movement with smooth rotation.
+## Move state — camera-relative ground movement.
+## Transitions to Idle, Air, Dodge, or Attack.
 extends PlayerState
-class_name PlayerMove
+
+
+func enter() -> void:
+    player.play_animation(&"walk")
 
 
 func physics_update(delta: float) -> void:
+    # Gravity
     if not player.is_on_floor():
+        player.velocity.y -= player.gravity * delta
         state_machine.change_state("Air")
         return
 
+    # Dodge
     if Input.is_action_just_pressed("dodge"):
         state_machine.change_state("Dodge")
         return
 
+    # Attack
     if Input.is_action_just_pressed("attack"):
         state_machine.change_state("Attack")
         return
 
+    # Parry
+    if Input.is_action_just_pressed("parry"):
+        state_machine.change_state("Parry")
+        return
+
+    # Movement
     var input_dir: Vector2 = Input.get_vector(
         "move_left", "move_right",
         "move_forward", "move_backward"
     )
 
-    if input_dir == Vector2.ZERO:
+    if input_dir.length() < 0.1:
         state_machine.change_state("Idle")
         return
 
-    var cam_basis: Basis = player.camera_pivot.global_transform.basis
+    var cam_basis: Basis = (
+        player.camera_pivot.global_transform.basis
+    )
     var direction: Vector3 = (
-        cam_basis * Vector3(input_dir.x, 0.0, input_dir.y)
+        cam_basis * Vector3(input_dir.x, 0, input_dir.y)
     ).normalized()
+    direction.y = 0.0
 
     player.velocity.x = direction.x * player.move_speed
     player.velocity.z = direction.z * player.move_speed
 
     player.rotate_toward_movement(direction, delta)
 
-
-func handle_input(_event: InputEvent) -> void:
-    if Input.is_action_just_pressed("jump") and player.is_on_floor():
+    # Jump
+    if Input.is_action_just_pressed("jump"):
         player.velocity.y = player.jump_velocity
         state_machine.change_state("Air")

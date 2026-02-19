@@ -1,5 +1,5 @@
-## Enemy attack state with windup → attack → recovery phases.
-## Deals damage via proximity check during the attack phase.
+## Enemy attack — windup → attack → recovery.
+## Deals damage via proximity in the attack phase.
 extends EnemyState
 class_name EnemyAttack
 
@@ -20,6 +20,7 @@ func enter() -> void:
     has_dealt_damage = false
     enemy.velocity.x = 0.0
     enemy.velocity.z = 0.0
+    enemy.play_animation(&"attack")
 
     # Face the player before attacking
     if enemy.player_ref:
@@ -31,6 +32,10 @@ func enter() -> void:
 
 
 func physics_update(delta: float) -> void:
+    if enemy.is_stunned:
+        state_machine.change_state("Idle")
+        return
+
     phase_timer -= delta
 
     match current_phase:
@@ -44,7 +49,9 @@ func physics_update(delta: float) -> void:
                 _try_deal_damage()
 
             if phase_timer <= 0.0:
-                current_phase = AttackPhase.RECOVERY
+                current_phase = (
+                    AttackPhase.RECOVERY
+                )
                 phase_timer = recovery_duration
 
         AttackPhase.RECOVERY:
@@ -52,14 +59,15 @@ func physics_update(delta: float) -> void:
                 _transition_after_recovery()
 
 
-## Transition to Attack or Chase after recovery.
 func _transition_after_recovery() -> void:
     if not enemy.player_ref:
         state_machine.change_state("Idle")
         return
 
-    var dist: float = enemy.global_position.distance_to(
-        enemy.player_ref.global_position
+    var dist: float = (
+        enemy.global_position.distance_to(
+            enemy.player_ref.global_position
+        )
     )
     if dist <= enemy.attack_range:
         state_machine.change_state("Attack")
@@ -73,11 +81,13 @@ func _try_deal_damage() -> void:
     if not enemy.player_ref:
         return
 
-    var dist: float = enemy.global_position.distance_to(
-        enemy.player_ref.global_position
+    var dist: float = (
+        enemy.global_position.distance_to(
+            enemy.player_ref.global_position
+        )
     )
 
     if dist <= enemy.attack_range * 1.2:
         var target: Player = enemy.player_ref
-        if target.hurtbox.monitoring:
+        if target.hurtbox.monitorable:
             target.take_damage(attack_damage)
